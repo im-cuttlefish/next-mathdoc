@@ -1,43 +1,39 @@
-import React, { FC, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { applyTheme } from "./internal/applyTheme";
-import { RefMeta, TheoremTheme, StyleWithTheme } from "./types";
+import React, { FC, useState, useEffect } from "react";
+import { createCounter, mergeThemes } from "./internal";
+import { RefMeta, Theme } from "./types";
 
-type Style = StyleWithTheme<TheoremTheme>;
+interface Arguments {
+  theme?: Theme | Theme[];
+}
 
 interface Props {
   name?: string;
   register?: (x: RefMeta) => void;
 }
 
-export const createTheorem = (prefix: string, style: Style = {}) => {
-  const uuidSet = new Set<string>();
-  const encoded = encodeURIComponent(prefix);
-  const applied = applyTheme(style);
+export const createTheorem = (
+  prefix: string,
+  { theme = {} }: Arguments = {}
+) => {
+  const merged = mergeThemes(theme);
+  const encodedPrefix = encodeURIComponent(prefix);
+  const useCounter = createCounter();
 
   const Theorem: FC<Props> = ({ name = "", register, children }) => {
-    const uuid = useRef(uuidv4()).current;
     const [htmlId, setHtmlId] = useState("");
-    const [counter, setCounter] = useState(0);
+    const counter = useCounter();
+    const title = `${prefix}${counter}．${name}`;
 
-    if (!uuidSet.has(uuid)) {
-      uuidSet.add(uuid);
-
-      const counter = uuidSet.size;
-      const htmlId = `theorem-${encoded}-${counter}`;
-
-      if (register) {
-        register({ isExternal: false, htmlId, counter, name });
-      }
-
-      setCounter(counter);
+    useEffect(() => {
+      const htmlId = `theorem-${encodedPrefix}-${counter}`;
       setHtmlId(htmlId);
-    }
+      register && register({ isExternal: false, htmlId, counter, name });
+    }, []);
 
     return (
-      <dl id={htmlId} style={applied.container}>
-        <dt style={applied.title}>{`${prefix}${counter}．${name}`}</dt>
-        <dd style={applied.content}>{children}</dd>
+      <dl id={htmlId} className={merged.theoremContainer}>
+        <dt className={merged.theoremTitle}>{title}</dt>
+        <dd className={merged.theoremContent}>{children}</dd>
       </dl>
     );
   };

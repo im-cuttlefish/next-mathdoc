@@ -1,33 +1,25 @@
 import React, { FC } from "react";
-import { ProofTheme, StyleWithTheme } from "./types";
-import { applyTheme } from "./internal/applyTheme";
+import { Theme } from "./types";
+import { mergeThemes } from "./internal";
 
-interface Mark {
+interface Arguments {
   startMark?: string;
   endMark?: string;
+  theme?: Theme | Theme[];
 }
 
-type Style = StyleWithTheme<ProofTheme>;
-
 export const createProof = ({
-  startMark = "証明．",
+  startMark = "Proof.",
   endMark = "∎",
-  ...style
-}: Mark & Style) => {
-  const applied = applyTheme(style);
+  theme = {},
+}: Arguments = {}) => {
+  const merged = mergeThemes(theme);
 
   const Proof: FC = ({ children }) => (
-    <div style={applied.container}>
-      <span style={applied.start}>{startMark}</span>
+    <div className={`${merged.proofContainer}`}>
+      <span className={`${merged.proofStartMark}`}>{startMark}</span>
       {children}
-      <span className="end-of-proof" style={applied.end}>
-        {endMark}
-      </span>
-      <style jsx>{`
-        .end-of-proof {
-          float: right;
-        }
-      `}</style>
+      <span className={`${merged.proofEndMark}`}>{endMark}</span>
     </div>
   );
 
