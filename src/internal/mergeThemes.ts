@@ -6,12 +6,13 @@ export const mergeThemes = (theme: Theme | Theme[]) => {
   }
 
   return theme.reduce((prev, current) => {
-    const merged = { ...prev } as { [x in string]?: string };
+    const merged = { ...prev };
 
-    for (const [key, value] of Object.entries(current)) {
+    for (const entry of Object.entries(current)) {
+      const [key, value] = entry as [keyof Theme, string];
       merged[key] = `${merged[key] || ""} ${value}`.trim();
     }
 
-    return merged as Theme;
+    return merged;
   });
 };
