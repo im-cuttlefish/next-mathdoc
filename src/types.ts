@@ -1,4 +1,28 @@
-import { ReactNode } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FC } from "react";
+import { RefArguments } from "./createRef";
+import { RefContainerArguments } from "./createRefContainer";
+import { TheoremArguments } from "./createTheorem";
+import { ProofArguments } from "./createProof";
+import { QuestionArguments } from "./createQuestion";
+import { AnswerArguments } from "./createAnswer";
+
+// general
+export type Creater<T extends { id: string } = any> = (
+  x: T
+) => { Component: FC<any>; Provider?: FC };
+
+export type MathdocRules =
+  | ["ref", RefArguments]
+  | ["refContainer", RefContainerArguments]
+  | ["theorem", TheoremArguments]
+  | ["proof", ProofArguments]
+  | ["question", QuestionArguments]
+  | ["answer", AnswerArguments];
+
+export type MathdocEnvironment = Readonly<
+  { [x in string]?: MathdocRules | ReturnType<Creater> }
+>;
 
 // Ref
 export interface InternalRefMeta {
@@ -22,7 +46,7 @@ export interface ExerciseStore {
 }
 
 // Theme
-type Ref = "refLink";
+type Ref = "refLink" | "refExternalLink" | "refInternalLink";
 
 type Theorem = "theoremContainer" | "theoremTitle" | "theoremContent";
 

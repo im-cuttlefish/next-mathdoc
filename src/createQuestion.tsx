@@ -1,50 +1,64 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import {
   createCounter,
   mergeThemes,
-  ExerciseContext,
-  RefContext,
-} from "./internal";
-import { ExerciseStore, Theme, InternalRefMeta } from "./types";
+  mergeClassName,
+  ExerciseProvider,
+  RefProvider,
+} from "./util";
+import { Theme, InternalRefMeta, Creater } from "./types";
 
-interface Arguments {
+export interface QuestionArguments {
+  id: string;
   prefix: string;
+  delimiter?: string;
   theme?: Theme | Theme[];
 }
 
 interface Props {
   name?: string;
+  display?: "name" | "counter" | "both";
+  className?: string;
 }
 
-export const createQuestion = (
-  id: string,
-  { prefix, theme = {} }: Arguments
-) => {
+export const createQuestion: Creater<QuestionArguments> = ({
+  id,
+  prefix,
+  delimiter = "．",
+  theme = {},
+}) => {
   const encoded = encodeURIComponent(id);
   const merged = mergeThemes(theme);
   const useCounter = createCounter();
 
-  const Question: FC<Props> = ({ name, children }) => {
+  const Question: FC<Props> = ({
+    name,
+    display = "both",
+    className,
+    children,
+  }) => {
+    const containerStyle = mergeClassName(merged.answerContainer, className);
     const counter = useCounter();
-    const htmlId = `ref-${encoded}-${counter}`;
-    const refMeta: InternalRefMeta = { isExternal: false, htmlId, counter };
-    const store: ExerciseStore = { counter };
+    const htmlId = `${encoded}-${counter}`;
 
-    if (name) {
-      refMeta.name = name;
-    }
+    const refMeta = useMemo(() => {
+      const refMeta: InternalRefMeta = { isExternal: false, htmlId, counter };
+      return name ? { ...refMeta, name } : refMeta;
+    }, [name]);
 
     return (
-      <div id={htmlId} className={merged.questionContainer}>
-        <p className={merged.questionTitle}>{`${prefix}${counter}`}</p>
-        <RefContext.Provider value={refMeta}>
-          <ExerciseContext.Provider value={store}>
-            {children}
-          </ExerciseContext.Provider>
-        </RefContext.Provider>
+      <div id={htmlId} className={containerStyle} data-mathdoc-id={id}>
+        <p className={merged.questionTitle} data-mathdoc-id={id}>
+          {display !== "name" && `${prefix}${counter}`}
+          {display === "both" && name && delimiter}
+          {display !== "counter" && name}
+        </p>
+        <RefProvider refMeta={refMeta}>
+          <ExerciseProvider counter={counter}>{children}</ExerciseProvider>
+        </RefProvider>
       </div>
     );
   };
 
-  return Question;
+  return { Component: Question };
 };

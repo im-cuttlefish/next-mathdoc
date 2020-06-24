@@ -1,28 +1,44 @@
 import React, { FC } from "react";
-import { RefContext, createCounter, mergeThemes } from "./internal";
-import { Theme, InternalRefMeta } from "./types";
+import {
+  createCounter,
+  mergeThemes,
+  mergeClassName,
+  RefProvider,
+} from "./util";
+import { Theme, InternalRefMeta, Creater } from "./types";
 
-interface Arguments {
+export interface TheoremArguments {
+  id: string;
   prefix: string;
+  delimiter?: string;
   theme?: Theme | Theme[];
 }
 
 interface Props {
   name?: string;
   display?: "name" | "counter" | "both";
+  className?: string;
 }
 
-export const createTheorem = (
-  id: string,
-  { prefix, theme = {} }: Arguments
-) => {
+export const createTheorem: Creater<TheoremArguments> = ({
+  id,
+  prefix,
+  delimiter = "．",
+  theme = {},
+}) => {
   const merged = mergeThemes(theme);
   const encoded = encodeURIComponent(id);
   const useCounter = createCounter();
 
-  const Theorem: FC<Props> = ({ name = "", display = "both", children }) => {
+  const Theorem: FC<Props> = ({
+    name = "",
+    display = "both",
+    className,
+    children,
+  }) => {
+    const containerStyle = mergeClassName(merged.theoremContainer, className);
     const counter = useCounter();
-    const htmlId = `ref-${encoded}-${counter}`;
+    const htmlId = `${encoded}-${counter}`;
     const refMeta: InternalRefMeta = { isExternal: false, htmlId, counter };
 
     if (name) {
@@ -30,18 +46,18 @@ export const createTheorem = (
     }
 
     return (
-      <dl id={htmlId} className={merged.theoremContainer}>
-        <dt className={merged.theoremTitle}>
+      <dl id={htmlId} className={containerStyle} data-mathdoc-id={id}>
+        <dt className={merged.theoremTitle} data-mathdoc-id={id}>
           {display !== "name" && `${prefix}${counter}`}
-          {display === "both" && "．"}
+          {display === "both" && name && delimiter}
           {display !== "counter" && name}
         </dt>
-        <dd className={merged.theoremContent}>
-          <RefContext.Provider value={refMeta}>{children}</RefContext.Provider>
+        <dd className={merged.theoremContent} data-mathdoc-id={id}>
+          <RefProvider refMeta={refMeta}>{children}</RefProvider>
         </dd>
       </dl>
     );
   };
 
-  return Theorem;
+  return { Component: Theorem };
 };

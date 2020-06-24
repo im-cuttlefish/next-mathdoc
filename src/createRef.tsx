@@ -1,8 +1,16 @@
-import React, { FC, useEffect, useContext } from "react";
-import { useForceUpdate, RefContext, RefRenderer, RefMap } from "./internal";
-import { Theme } from "./types";
+import React, {
+  FC,
+  useEffect,
+  useContext,
+  createContext,
+  useReducer,
+  useMemo,
+} from "react";
+import { RefContext, RefRenderer, refReducer } from "./util";
+import { Theme, Creater, RefMeta } from "./types";
 
-interface Arguments {
+export interface RefArguments {
+  id: string;
   prefix: string;
   theme?: Theme | Theme[];
 }
@@ -12,39 +20,61 @@ interface Props {
   use?: string;
   name?: boolean;
   external?: { [id in string]?: [string, string] };
+  className?: string;
 }
 
-export const createRef = ({ prefix, theme = {} }: Arguments) => {
-  const updaterSet = new Set<() => void>();
-  const refMap = new RefMap();
+interface RefMapContext {
+  refMap: { [x in string]?: RefMeta };
+  registerRefMeta: (x: string, y: RefMeta) => void;
+  unregisterRefMeta: (x: string) => void;
+}
 
-  const Ref: FC<Props> = ({ label, use, external, name }) => {
+const initialValue: RefMapContext = {
+  refMap: {},
+  registerRefMeta: () => null,
+  unregisterRefMeta: () => null,
+};
+
+export const createRef: Creater<RefArguments> = ({
+  id,
+  prefix,
+  theme = {},
+}) => {
+  const RefMapContext = createContext(initialValue);
+
+  const Ref: FC<Props> = ({ label, use, external, name, className }) => {
     const fromParent = useContext(RefContext);
-    const update = useForceUpdate();
-
-    updaterSet.add(update);
+    const { refMap, registerRefMeta, unregisterRefMeta } = useContext(
+      RefMapContext
+    );
 
     useEffect(() => {
       if (label && fromParent) {
-        refMap.set(label, fromParent);
-        updaterSet.forEach((x) => x());
-        return () => refMap.delete(label);
+        registerRefMeta(label, fromParent);
+        return () => {
+          unregisterRefMeta(label);
+        };
       }
 
       if (external) {
-        refMap.registerExternal(external);
-        updaterSet.forEach((x) => x());
-        return () => refMap.unregisterExternal(external);
-      }
+        for (const [id, value] of Object.entries(external)) {
+          const [name, path] = value as [string, string];
+          registerRefMeta(id, { isExternal: true, name, path });
+        }
 
-      return () => updaterSet.delete(update);
+        return () => {
+          for (const id of Object.keys(external)) {
+            unregisterRefMeta(id);
+          }
+        };
+      }
     }, []);
 
     if (external || label) {
       return null;
     }
 
-    const refMeta = use && refMap.get(use);
+    const refMeta = use && refMap[use];
 
     if (!refMeta) {
       return (
@@ -54,8 +84,28 @@ export const createRef = ({ prefix, theme = {} }: Arguments) => {
       );
     }
 
-    return <RefRenderer {...{ prefix, refMeta, name, theme }} />;
+    return <RefRenderer {...{ id, prefix, refMeta, name, theme, className }} />;
   };
 
-  return Ref;
+  const Provider: FC = ({ children }) => {
+    const [refMap, dispatch] = useReducer(refReducer, {});
+    const value: RefMapContext = useMemo(
+      () => ({
+        refMap,
+        registerRefMeta: (id, refMeta) => {
+          dispatch({ type: "register_ref", id, refMeta });
+        },
+        unregisterRefMeta: (id) => {
+          dispatch({ type: "unregister_ref", id });
+        },
+      }),
+      [refMap]
+    );
+
+    return (
+      <RefMapContext.Provider value={value}>{children}</RefMapContext.Provider>
+    );
+  };
+
+  return { Component: Ref, Provider };
 };

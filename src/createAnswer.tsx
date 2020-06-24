@@ -1,25 +1,46 @@
-import React, { FC, useContext } from "react";
-import { mergeThemes, ExerciseContext, RefContext } from "./internal";
-import { Theme, InternalRefMeta } from "./types";
+import React, { useContext, FC } from "react";
+import {
+  ExerciseContext,
+  mergeThemes,
+  mergeClassName,
+  RefProvider,
+} from "./util";
+import { Theme, Creater, InternalRefMeta } from "./types";
 
-interface Arguments {
+export interface AnswerArguments {
+  id: string;
   prefix: string;
+  delimiter?: string;
   theme?: Theme | Theme[];
 }
 
 interface Props {
   name?: string;
+  display?: "name" | "counter" | "both";
   expansion?: boolean;
+  className?: string;
 }
 
-export const createAnswer = (id: string, { prefix, theme = {} }: Arguments) => {
+export const createAnswer: Creater<AnswerArguments> = ({
+  id,
+  prefix,
+  delimiter = "．",
+  theme = {},
+}) => {
   const encoded = encodeURIComponent(id);
   const merged = mergeThemes(theme);
 
-  const Answer: FC<Props> = ({ name, expansion = false, children }) => {
+  const Answer: FC<Props> = ({
+    name,
+    display = "both",
+    expansion,
+    className,
+    children,
+  }) => {
     const { counter } = useContext(ExerciseContext);
+    const containerStyle = mergeClassName(merged.answerContainer, className);
     const title = `${prefix}${counter}`;
-    const htmlId = `ref-${encoded}-${counter}`;
+    const htmlId = `${encoded}-${counter}`;
     const refMeta: InternalRefMeta = { isExternal: false, htmlId, counter };
 
     if (name) {
@@ -28,24 +49,28 @@ export const createAnswer = (id: string, { prefix, theme = {} }: Arguments) => {
 
     if (expansion) {
       return (
-        <details id={htmlId} className={merged.answerContainer} data-expansion>
-          <summary className={merged.answerTitle} data-expansion>
-            {title}
+        <details id={htmlId} className={containerStyle} data-mathdoc-id={id}>
+          <summary className={merged.answerTitle} data-mathdoc-id={id}>
+            {display !== "name" && title}
+            {display === "both" && name && delimiter}
+            {display !== "counter" && name}
           </summary>
-          <RefContext.Provider value={refMeta}>{children}</RefContext.Provider>
+          <RefProvider refMeta={refMeta}>{children}</RefProvider>
         </details>
       );
     }
 
     return (
-      <div id={htmlId} className={merged.answerContainer} data-displayed>
-        <p className={merged.answerTitle} data-displayed>
-          {title}
+      <div id={htmlId} className={containerStyle} data-mathdoc-id={id}>
+        <p className={merged.answerTitle} data-mathdoc-id={id}>
+          {display !== "name" && title}
+          {display === "both" && name && delimiter}
+          {display !== "counter" && name}
         </p>
-        <RefContext.Provider value={refMeta}>{children}</RefContext.Provider>
+        <RefProvider refMeta={refMeta}>{children}</RefProvider>
       </div>
     );
   };
 
-  return Answer;
+  return { Component: Answer };
 };

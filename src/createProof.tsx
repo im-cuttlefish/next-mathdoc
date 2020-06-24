@@ -1,27 +1,41 @@
 import React, { FC } from "react";
-import { Theme } from "./types";
-import { mergeThemes } from "./internal";
+import { Theme, Creater } from "./types";
+import { mergeThemes, mergeClassName } from "./util";
 
-interface Arguments {
+export interface ProofArguments {
+  id: string;
   startMark?: string;
   endMark?: string;
   theme?: Theme | Theme[];
 }
 
-export const createProof = ({
+interface Props {
+  className: string;
+}
+
+export const createProof: Creater<ProofArguments> = ({
+  id,
   startMark = "Proof.",
   endMark = "∎",
   theme = {},
-}: Arguments = {}) => {
+}) => {
   const merged = mergeThemes(theme);
 
-  const Proof: FC = ({ children }) => (
-    <div className={`${merged.proofContainer}`}>
-      <span className={`${merged.proofStartMark}`}>{startMark}</span>
-      {children}
-      <span className={`${merged.proofEndMark}`}>{endMark}</span>
-    </div>
-  );
+  const Proof: FC<Props> = ({ className, children }) => {
+    const containerStyle = mergeClassName(merged.proofContainer, className);
 
-  return Proof;
+    return (
+      <div className={containerStyle} data-mathdoc-id={id}>
+        <span className={merged.proofStartMark} data-mathdoc-id={id}>
+          {startMark}
+        </span>
+        {children}
+        <span className={merged.proofEndMark} data-mathdoc-id={id}>
+          {endMark}
+        </span>
+      </div>
+    );
+  };
+
+  return { Component: Proof };
 };
