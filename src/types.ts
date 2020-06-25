@@ -50,11 +50,15 @@ type Ref = "refLink" | "refExternalLink" | "refInternalLink";
 
 type Theorem = "theoremContainer" | "theoremTitle" | "theoremContent";
 
-type Proof = "proofContainer" | "proofStartMark" | "proofEndMark";
+type Proof =
+  | "proofContainer"
+  | "proofStartMark"
+  | "proofEndMark"
+  | "proofContent";
 
-type Question = "questionContainer" | "questionTitle";
+type Question = "questionContainer" | "questionTitle" | "questionContent";
 
-type Answer = "answerContainer" | "answerTitle";
+type Answer = "answerContainer" | "answerTitle" | "answerContent";
 
 type ClassName = Ref | Theorem | Proof | Question | Answer;
 

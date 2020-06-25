@@ -53,9 +53,11 @@ export const createQuestion: Creater<QuestionArguments> = ({
           {display === "both" && name && delimiter}
           {display !== "counter" && name}
         </p>
-        <RefProvider refMeta={refMeta}>
-          <ExerciseProvider counter={counter}>{children}</ExerciseProvider>
-        </RefProvider>
+        <div className={merged.questionContent}>
+          <RefProvider refMeta={refMeta}>
+            <ExerciseProvider counter={counter}>{children}</ExerciseProvider>
+          </RefProvider>
+        </div>
       </div>
     );
   };

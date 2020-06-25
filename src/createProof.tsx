@@ -26,13 +26,15 @@ export const createProof: Creater<ProofArguments> = ({
 
     return (
       <div className={containerStyle} data-mathdoc-id={id}>
-        <span className={merged.proofStartMark} data-mathdoc-id={id}>
-          {startMark}
-        </span>
-        {children}
-        <span className={merged.proofEndMark} data-mathdoc-id={id}>
-          {endMark}
-        </span>
+        <div className={merged.proofContent}>
+          <span className={merged.proofStartMark} data-mathdoc-id={id}>
+            {startMark}
+          </span>
+          {children}
+          <span className={merged.proofEndMark} data-mathdoc-id={id}>
+            {endMark}
+          </span>
+        </div>
       </div>
     );
   };

@@ -55,7 +55,9 @@ export const createAnswer: Creater<AnswerArguments> = ({
             {display === "both" && name && delimiter}
             {display !== "counter" && name}
           </summary>
-          <RefProvider refMeta={refMeta}>{children}</RefProvider>
+          <div className={merged.answerContent}>
+            <RefProvider refMeta={refMeta}>{children}</RefProvider>
+          </div>
         </details>
       );
     }
@@ -67,7 +69,9 @@ export const createAnswer: Creater<AnswerArguments> = ({
           {display === "both" && name && delimiter}
           {display !== "counter" && name}
         </p>
-        <RefProvider refMeta={refMeta}>{children}</RefProvider>
+        <div className={merged.answerContent}>
+          <RefProvider refMeta={refMeta}>{children}</RefProvider>
+        </div>
       </div>
     );
   };
