@@ -1,10 +1,10 @@
 import React, { FC, useMemo } from "react";
 import {
-  createCounter,
   mergeThemes,
   mergeClassName,
   ExerciseProvider,
   RefProvider,
+  withCounter,
 } from "./util";
 import { Theme, InternalRefMeta, Creater } from "./types";
 
@@ -19,6 +19,7 @@ interface Props {
   name?: string;
   display?: "name" | "counter" | "both";
   className?: string;
+  counter: number;
 }
 
 export const createQuestion: Creater<QuestionArguments> = ({
@@ -29,16 +30,15 @@ export const createQuestion: Creater<QuestionArguments> = ({
 }) => {
   const encoded = encodeURIComponent(id);
   const merged = mergeThemes(theme);
-  const useCounter = createCounter();
 
   const Question: FC<Props> = ({
     name,
     display = "both",
     className,
     children,
+    counter,
   }) => {
     const containerStyle = mergeClassName(merged.answerContainer, className);
-    const counter = useCounter();
     const htmlId = `${encoded}-${counter}`;
 
     const refMeta = useMemo(() => {
@@ -62,5 +62,5 @@ export const createQuestion: Creater<QuestionArguments> = ({
     );
   };
 
-  return { Component: Question };
+  return { Component: withCounter(id, Question) };
 };

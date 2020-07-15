@@ -1,11 +1,7 @@
 import React, { FC } from "react";
-import {
-  createCounter,
-  mergeThemes,
-  mergeClassName,
-  RefProvider,
-} from "./util";
+import { mergeThemes, mergeClassName, RefProvider } from "./util";
 import { Theme, InternalRefMeta, Creater } from "./types";
+import { withCounter } from "./util";
 
 export interface TheoremArguments {
   id: string;
@@ -18,6 +14,7 @@ interface Props {
   name?: string;
   display?: "name" | "counter" | "both";
   className?: string;
+  counter: number;
 }
 
 export const createTheorem: Creater<TheoremArguments> = ({
@@ -28,16 +25,15 @@ export const createTheorem: Creater<TheoremArguments> = ({
 }) => {
   const merged = mergeThemes(theme);
   const encoded = encodeURIComponent(id);
-  const useCounter = createCounter();
 
   const Theorem: FC<Props> = ({
     name = "",
     display = "both",
     className,
     children,
+    counter,
   }) => {
     const containerStyle = mergeClassName(merged.theoremContainer, className);
-    const counter = useCounter();
     const htmlId = `${encoded}-${counter}`;
     const refMeta: InternalRefMeta = { isExternal: false, htmlId, counter };
 
@@ -59,5 +55,5 @@ export const createTheorem: Creater<TheoremArguments> = ({
     );
   };
 
-  return { Component: Theorem };
+  return { Component: withCounter(id, Theorem) };
 };
