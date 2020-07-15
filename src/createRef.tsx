@@ -68,7 +68,7 @@ export const createRef: Creater<RefArguments> = ({
           }
         };
       }
-    }, []);
+    }, [fromParent, external]);
 
     if (external || label) {
       return null;

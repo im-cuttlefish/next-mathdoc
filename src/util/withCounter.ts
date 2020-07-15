@@ -26,7 +26,7 @@ export const withCounter = <T extends FC<{ counter: number }>>(
 
     return createElement(
       "div",
-      { "data-mathdoc-count": id, style: { display: "content" }, ref },
+      { "data-mathdoc-count": id, style: { display: "contents" }, ref },
       createElement(component, { ...props, counter }, props.children)
     );
   };
