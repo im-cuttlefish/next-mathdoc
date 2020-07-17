@@ -1,6 +1,6 @@
 {
   "name": "next-mathdoc",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "",
   "private": false,
   "main": "dist/index.js",
@@ -28,9 +28,7 @@
   },
   "homepage": "https://github.com/im-cuttlefish/next-mathdoc#readme",
   "dependencies": {
-    "core-js": "^3.6.5",
-    "styled-jsx": "^3.3.0",
-    "uuid": "^8.1.0"
+    "core-js": "^3.6.5"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.10.2",
