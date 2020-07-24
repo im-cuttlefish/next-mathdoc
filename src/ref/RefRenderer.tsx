@@ -1,8 +1,9 @@
 import React, { FC, useMemo } from "react";
 import Link from "next/link";
-import { RefMeta, InternalRefMeta, Theme } from "../types";
-import { mergeThemes } from "./mergeThemes";
-import { mergeClassName } from "./mergeClassName";
+import { Theme } from "../types";
+import { RefMeta, InternalRefMeta } from "./types";
+import { mergeThemes } from "../util/mergeThemes";
+import { mergeClassName } from "../util/mergeClassName";
 
 interface Props {
   id: string;

@@ -1,6 +1,7 @@
 import React, { FC } from "react";
-import { RefProvider, withCounter } from "./util";
-import { InternalRefMeta, Creater } from "./types";
+import { withCounter } from "./util";
+import { RefProvider, InternalRefMeta } from "./ref";
+import { Creater } from "./types";
 
 export interface RefContainerArguments {
   id: string;

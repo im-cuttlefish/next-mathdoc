@@ -6,8 +6,11 @@ import React, {
   useReducer,
   useMemo,
 } from "react";
-import { RefContext, RefRenderer, refReducer } from "./util";
-import { Theme, Creater, RefMeta } from "./types";
+import { RefContext } from "./RefContext";
+import { RefRenderer } from "./RefRenderer";
+import { refReducer } from "./refReducer";
+import { Theme, Creater } from "../types";
+import { RefMeta } from "./types";
 
 export interface RefArguments {
   id: string;

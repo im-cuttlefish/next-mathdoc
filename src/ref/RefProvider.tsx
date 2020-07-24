@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from "react";
-import { InternalRefMeta } from "../types";
-import { RefContext } from "./refContext";
+import { InternalRefMeta } from "./types";
+import { RefContext } from "./RefContext";
 
 interface Props {
   refMeta: InternalRefMeta;

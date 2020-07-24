@@ -1,4 +1,4 @@
-import { RefMeta } from "../types";
+import { RefMeta } from "./types";
 
 type State = { [x in string]?: RefMeta };
 

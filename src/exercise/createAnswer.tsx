@@ -1,11 +1,8 @@
 import React, { useContext, FC } from "react";
-import {
-  ExerciseContext,
-  mergeThemes,
-  mergeClassName,
-  RefProvider,
-} from "./util";
-import { Theme, Creater, InternalRefMeta } from "./types";
+import { mergeThemes, mergeClassName } from "../util";
+import { RefProvider, InternalRefMeta } from "../ref";
+import { ExerciseContext } from "./ExerciseContext";
+import { Theme, Creater } from "../types";
 
 export interface AnswerArguments {
   id: string;

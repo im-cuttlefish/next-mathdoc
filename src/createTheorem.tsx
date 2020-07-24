@@ -1,7 +1,7 @@
 import React, { FC } from "react";
-import { mergeThemes, mergeClassName, RefProvider } from "./util";
-import { Theme, InternalRefMeta, Creater } from "./types";
-import { withCounter } from "./util";
+import { mergeThemes, mergeClassName, withCounter } from "./util";
+import { RefProvider, InternalRefMeta } from "./ref";
+import { Theme, Creater } from "./types";
 
 export interface TheoremArguments {
   id: string;

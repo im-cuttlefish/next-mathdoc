@@ -1,8 +1,8 @@
-export { useMathdoc } from "./useMathdoc";
 export { createMathdoc } from "./createMathdoc";
-export { createRef } from "./createRef";
+export { withPlugins } from "./withPlugins";
+export { createRef } from "./ref";
 export { createRefContainer } from "./createRefContainer";
 export { createTheorem } from "./createTheorem";
 export { createProof } from "./createProof";
-export { createQuestion } from "./createQuestion";
-export { createAnswer } from "./createAnswer";
+export { createQuestion, createAnswer } from "./exercise";
+export type { Creater } from "./types";

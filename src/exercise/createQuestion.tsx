@@ -1,12 +1,8 @@
 import React, { FC, useMemo } from "react";
-import {
-  mergeThemes,
-  mergeClassName,
-  ExerciseProvider,
-  RefProvider,
-  withCounter,
-} from "./util";
-import { Theme, InternalRefMeta, Creater } from "./types";
+import { mergeThemes, mergeClassName, withCounter } from "../util";
+import { RefProvider, InternalRefMeta } from "../ref";
+import { ExerciseProvider } from "./ExcerciseProvider";
+import { Theme, Creater } from "../types";
 
 export interface QuestionArguments {
   id: string;

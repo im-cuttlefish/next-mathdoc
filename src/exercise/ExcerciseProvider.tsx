@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from "react";
-import { ExerciseContext } from "./exerciseContext";
+import { ExerciseContext } from "./ExerciseContext";
 
 interface Props {
   counter: number;
