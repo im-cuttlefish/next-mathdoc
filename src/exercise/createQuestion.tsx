@@ -34,7 +34,7 @@ export const createQuestion: Creater<QuestionArguments> = ({
     children,
     counter,
   }) => {
-    const containerStyle = mergeClassName(merged.answerContainer, className);
+    const containerStyle = mergeClassName(merged.questionContainer, className);
     const htmlId = `${encoded}-${counter}`;
 
     const refMeta = useMemo(() => {
