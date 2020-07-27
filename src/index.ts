@@ -8,7 +8,7 @@ export { createProof } from "./createProof";
 export { createQuestion, createAnswer } from "./exercise";
 
 // for plugin development
+export { mergeThemes, mergeClassNames, withCounter } from "./util";
 export { RefProvider } from "./ref";
-export { mergeClassName, mergeThemes, withCounter } from "./util";
-export type { Creater, Theme } from "./types";
 export type { InternalRefMeta } from "./ref";
+export type { Creater, Theme } from "./types";

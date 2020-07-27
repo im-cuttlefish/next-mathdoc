@@ -1,14 +1,12 @@
 import { Theme } from "../types";
-import { initialTheme } from "./initialTheme";
 
-export const mergeThemes = (theme: Theme | Theme[]) => {
-  if (!Array.isArray(theme)) {
-    theme = [theme];
-  }
+export const mergeThemes = <T extends Theme>(
+  classNames: T,
+  ...theme: (Theme | Theme[])[]
+) => {
+  const flatten = [classNames, theme].flat(Infinity) as Theme[];
 
-  theme = [...theme, initialTheme];
-
-  return theme.reduce((prev, current) => {
+  return flatten.reduce((prev, current) => {
     const merged = { ...prev };
 
     for (const entry of Object.entries(current)) {
@@ -17,5 +15,5 @@ export const mergeThemes = (theme: Theme | Theme[]) => {
     }
 
     return merged;
-  });
+  }) as T;
 };

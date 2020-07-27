@@ -2,8 +2,7 @@ import React, { FC, useMemo } from "react";
 import Link from "next/link";
 import { Theme } from "../types";
 import { RefMeta, InternalRefMeta } from "./types";
-import { mergeThemes } from "../util/mergeThemes";
-import { mergeClassName } from "../util/mergeClassName";
+import { mergeThemes, mergeClassNames } from "../util";
 
 interface Props {
   id: string;
@@ -14,6 +13,12 @@ interface Props {
   className?: string;
 }
 
+const classNames = {
+  refLink: "mathdoc-ref-link",
+  refInternalLink: "mathdoc-ref-internal-link",
+  refExternalLink: "mathdoc-ref-external-link",
+};
+
 export const RefRenderer: FC<Props> = ({
   id,
   prefix,
@@ -23,12 +28,12 @@ export const RefRenderer: FC<Props> = ({
   className,
 }) => {
   const { refLink, refInternalLink, refExternalLink } = useMemo(
-    () => mergeThemes(theme),
+    () => mergeThemes(classNames, theme),
     [theme]
   );
 
   if (refMeta.isExternal) {
-    const external = mergeClassName(refLink, refExternalLink, className);
+    const external = mergeClassNames(refLink, refExternalLink, className);
     const { path, name } = refMeta;
     const isFullPath = /^(https?:)?\/\//.test(path);
 
@@ -49,7 +54,7 @@ export const RefRenderer: FC<Props> = ({
     );
   }
 
-  const internal = mergeClassName(refLink, refInternalLink, className);
+  const internal = mergeClassNames(refLink, refInternalLink, className);
   const { counter, htmlId } = refMeta as InternalRefMeta;
 
   if (name && refMeta.name) {

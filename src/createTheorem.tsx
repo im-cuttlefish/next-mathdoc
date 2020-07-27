@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { mergeThemes, mergeClassName, withCounter } from "./util";
+import { mergeClassNames, withCounter, mergeThemes } from "./util";
 import { RefProvider, InternalRefMeta } from "./ref";
 import { Theme, Creater } from "./types";
 
@@ -17,13 +17,19 @@ interface Props {
   counter: number;
 }
 
+const classNames = {
+  theoremContainer: "mathdoc-theorem-container",
+  theoremContent: "mathdoc-theorem-content",
+  theoremTitle: "mathdoc-theorem-title",
+};
+
 export const createTheorem: Creater<TheoremArguments> = ({
   id,
   prefix,
   delimiter = "．",
   theme = {},
 }) => {
-  const merged = mergeThemes(theme);
+  const merged = mergeThemes(classNames, theme);
   const encoded = encodeURIComponent(id);
 
   const Theorem: FC<Props> = ({
@@ -33,7 +39,7 @@ export const createTheorem: Creater<TheoremArguments> = ({
     children,
     counter,
   }) => {
-    const containerStyle = mergeClassName(merged.theoremContainer, className);
+    const containerStyle = mergeClassNames(merged.theoremContainer, className);
     const htmlId = `${encoded}-${counter}`;
     const refMeta: InternalRefMeta = { isExternal: false, htmlId, counter };
 

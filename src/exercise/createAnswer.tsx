@@ -1,5 +1,5 @@
 import React, { useContext, FC } from "react";
-import { mergeThemes, mergeClassName } from "../util";
+import { mergeClassNames, mergeThemes } from "../util";
 import { RefProvider, InternalRefMeta } from "../ref";
 import { ExerciseContext } from "./ExerciseContext";
 import { Theme, Creater } from "../types";
@@ -18,6 +18,12 @@ interface Props {
   className?: string;
 }
 
+const classNames = {
+  answerContainer: "mathdoc-answer-container",
+  answerContent: "mathdoc-answer-content",
+  answerTitle: "mathdoc-answer-title",
+};
+
 export const createAnswer: Creater<AnswerArguments> = ({
   id,
   prefix,
@@ -25,7 +31,7 @@ export const createAnswer: Creater<AnswerArguments> = ({
   theme = {},
 }) => {
   const encoded = encodeURIComponent(id);
-  const merged = mergeThemes(theme);
+  const merged = mergeThemes(classNames, theme);
 
   const Answer: FC<Props> = ({
     name,
@@ -35,7 +41,7 @@ export const createAnswer: Creater<AnswerArguments> = ({
     children,
   }) => {
     const { counter } = useContext(ExerciseContext);
-    const containerStyle = mergeClassName(merged.answerContainer, className);
+    const containerStyle = mergeClassNames(merged.answerContainer, className);
     const title = `${prefix}${counter}`;
     const htmlId = `${encoded}-${counter}`;
     const refMeta: InternalRefMeta = { isExternal: false, htmlId, counter };

@@ -1,5 +1,5 @@
-import React, { FC, useMemo } from "react";
-import { mergeThemes, mergeClassName, withCounter } from "../util";
+import React, { FC } from "react";
+import { mergeClassNames, withCounter, mergeThemes } from "../util";
 import { RefProvider, InternalRefMeta } from "../ref";
 import { ExerciseProvider } from "./ExcerciseProvider";
 import { Theme, Creater } from "../types";
@@ -18,6 +18,12 @@ interface Props {
   counter: number;
 }
 
+const classNames = {
+  questionContainer: "mathdoc-question-container",
+  questionContent: "mathdoc-question-content",
+  questionTitle: "mathdoc-question-title",
+};
+
 export const createQuestion: Creater<QuestionArguments> = ({
   id,
   prefix,
@@ -25,7 +31,7 @@ export const createQuestion: Creater<QuestionArguments> = ({
   theme = {},
 }) => {
   const encoded = encodeURIComponent(id);
-  const merged = mergeThemes(theme);
+  const merged = mergeThemes(classNames, theme);
 
   const Question: FC<Props> = ({
     name,
@@ -34,13 +40,13 @@ export const createQuestion: Creater<QuestionArguments> = ({
     children,
     counter,
   }) => {
-    const containerStyle = mergeClassName(merged.questionContainer, className);
+    const containerStyle = mergeClassNames(merged.questionContainer, className);
     const htmlId = `${encoded}-${counter}`;
+    const refMeta: InternalRefMeta = { isExternal: false, htmlId, counter };
 
-    const refMeta = useMemo(() => {
-      const refMeta: InternalRefMeta = { isExternal: false, htmlId, counter };
-      return name ? { ...refMeta, name } : refMeta;
-    }, [name]);
+    if (name) {
+      refMeta.name = name;
+    }
 
     return (
       <div id={htmlId} className={containerStyle} data-mathdoc-id={id}>
